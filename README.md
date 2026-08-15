@@ -65,7 +65,7 @@ ASSIGNMENT.md               # Full brief — read this first
 | `DELETE` | `/tasks/:id`              | Delete a task (returns 204)              |
 | `PATCH`  | `/tasks/:id/complete`     | Mark a task as complete                  |
 | `GET`    | `/tasks/stats`            | Counts by status + overdue count         |
-| `PATCH`  | `/tasks/:id/assign`       | **Assign a task to a user** _(to implement)_ |
+| `PATCH`  | `/tasks/:id/assign`       | Assign a task to a user                  |
 
 ### Task shape
 
@@ -101,13 +101,32 @@ curl "http://localhost:3000/tasks?status=pending&page=1&limit=10"
 curl -X PATCH http://localhost:3000/tasks/<id>/complete
 ```
 
----
+**Assign a task**
 
+```bash
+curl -X PATCH http://localhost:3000/tasks/<id>/assign \
+  -H "Content-Type: application/json" \
+  -d '{"assignee":"Aditi"}'
+```
 ## What to Submit
-
 See [ASSIGNMENT.md](./ASSIGNMENT.md) for full submission requirements. At minimum, include:
 
 - **Test files** — covering the endpoints and edge cases you identified
 - **Bug report** — what you found, where in the code, and why it's a bug (not just symptoms)
 - **At least one fix** — with a note on your approach
 - **`PATCH /tasks/:id/assign` implementation** — plus a short explanation of any design decisions (validation, edge cases, etc.)
+
+
+## Submission Notes
+
+### What I would test next
+
+If I had more time, I would add more tests for invalid pagination parameters, combinations of status filtering with pagination, repeated completion of an already completed task, and additional due-date boundary cases. I would also test malformed request bodies and unexpected input types more extensively.
+
+### What surprised me
+
+One thing that stood out was that the API uses an in-memory array as its data store, meaning all task data is lost whenever the server restarts. I also found that some validation and error-handling behavior was not explicitly covered by the original tests, so adding edge-case tests helped expose and verify these behaviors.
+
+### Questions before shipping to production
+
+Before shipping this API to production, I would clarify the requirements for persistent storage, authentication and authorization, input validation, and standardized error responses. I would also want to understand the expected approach for logging, monitoring, rate limiting, and handling concurrent updates to the same task.
